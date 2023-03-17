@@ -6,10 +6,15 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"cloud:create": "pnpm exec wrangler pages project create",
-		"cloud:deploy": "pnpm exec wrangler pages project deploy",
+		"cloud:publish": "pnpm exec wrangler publish .svelte-kit/cloudflare/_worker.js",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"pnpm":{
+		"overrides": {
+   		"svelte": "npm:@typhonjs-svelte/svelte@3.55.1-cq2"
+		}
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
