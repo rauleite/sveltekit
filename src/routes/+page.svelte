@@ -178,6 +178,7 @@
   :global(.lightTheme) {
   }
   :global(body) {
+    --text-color: var(--color-primary-400);
     background: var(--bg-color);
     color: var(--text-color);
     font-family: var(--font-family);
