@@ -1,13 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import {
-    addClass,
+    setClass,
     Theme,
-    removeAllClasses,
-    setContrastStorage,
-    removeContrastStorage,
-    isContrastTheme,
     getConstrastStorage,
+    isDarkScheme,
+    addContrastStorage,
   } from "./page";
 
   let isDisabled = true;
@@ -32,24 +30,30 @@
   onMount(() => {
     isDisabled = false;
   });
+  /*
+   * if clicked on dark or light: will be only that theme class
+   * but if clicked on system, then it will be additional to the
+   * anothers (dark or light).
+   * E.g. class="darkTheme"; class="lightTheme"; class="darkTheme systemTheme"
+   * class="lightTheme systemTheme"
+   */
+  const setTheme = (theme: Theme) => {
+    if (theme === Theme.system) {
+      if (isDarkScheme) {
+        theme = Theme.dark;
+      } else {
+        theme = Theme.light;
+      }
+    }
+    // else {
+    //   removeClass(Theme.system);
+    // }
 
-  const dark = () => {
-    addClass(Theme.dark);
-    setContrastStorage(Theme.dark);
-    disableButton(Theme.dark);
+    // theme is dark or light, but not system
+    setClass(theme);
+    addContrastStorage(theme);
+    disableButton(theme);
   };
-  const light = () => {
-    addClass(Theme.light);
-    setContrastStorage(Theme.light);
-    disableButton(Theme.light);
-  };
-  const system = () => {
-    removeAllClasses();
-    removeContrastStorage();
-    disableButton(Theme.system);
-  };
-  console.log("isContrastTheme(Theme.dark)", isContrastTheme(Theme.dark));
-  console.log("isDisabled", isDisabled);
 </script>
 
 <svelte:head>
@@ -69,7 +73,7 @@
           document.documentElement.classList[action](className);
         });
       };
-      const addClass = (theme: Theme) => {
+      const setClass = (theme: Theme) => {
         if (theme === Theme.dark) {
           updateClass([
             [Action.remove, Theme.light],
@@ -93,32 +97,42 @@
       ).matches;
 
       console.log("storageContrastTheme", storageContrastTheme);
-
+      // Ever has a theme storage
       if (isDarkStorage) {
-        addClass(Theme.dark);
+        setClass(Theme.dark);
       } else if (isLightStorage) {
-        addClass(Theme.light);
+        setClass(Theme.light);
+        // here is the first access
       } else if (isDarkScheme) {
-        addClass(Theme.dark);
+        setClass(Theme.dark);
+        localStorage.setItem(Theme.contrast, Theme.dark);
       } else if (isLightScheme) {
-        // addClass(Theme.light);
+        setClass(Theme.light);
+        localStorage.setItem(Theme.contrast, Theme.light);
       }
     }
   </script>
 </svelte:head>
 
-<button disabled={isDisabled || disableButtons[Theme.dark]} on:click={dark}
-  >Dark</button
+<button
+  disabled={isDisabled || disableButtons[Theme.dark]}
+  on:click={() => setTheme(Theme.dark)}
+  >Dark
+</button>
+<button
+  disabled={isDisabled || disableButtons[Theme.light]}
+  on:click={() => setTheme(Theme.light)}
 >
-<button disabled={isDisabled || disableButtons[Theme.light]} on:click={light}>
   Light
 </button>
-<button disabled={isDisabled || disableButtons[Theme.system]} on:click={system}
-  >System</button
->
+<button
+  disabled={isDisabled || disableButtons[Theme.system]}
+  on:click={() => setTheme(Theme.system)}
+  >System
+</button>
 
 <header>
-  <label for="theme-switch" class="switch-label" />
+  <!-- <label for="theme-switch" class="switch-label" /> -->
 </header>
 <main>
   <h1>CSS Only Theme Switcher</h1>
@@ -154,79 +168,23 @@
   </footer>
 </main>
 
-<style lang="scss">
-  @use "sass:color";
-
+<style lang="postcss">
+  @import "./light.css";
+  @import "./dark.css";
   :global(:root) {
-    /* Light mode */
-    --light-text: #222430;
-    /* --light-bg: #f7f7f7; */
-    --light-bg-level: 0%;
-    --light-bg-h: 0;
-    --light-bg-s: 0%;
-    --light-bg-l: 97%;
-
-    --light-theme: #d34a97;
-    /* --light-theme-lighten: 1; */
-    --light-h-level: 0%;
-    --light-h: 326;
-    --light-s: 61%;
-    --light-l: 56%;
-
-    --light-theme-contrast: hsl(
-      var(--light-h),
-      var(--light-s),
-      calc(var(--light-l) + var(--light-h-level))
-    );
-    // --light-theme: hsl(var(--light-h), var(--light-s), var(--light-l));
-    --light-bg: hsl(var(--light-bg-h), var(--light-bg-s), var(--light-bg-l));
-
-    /* Dark mode */
-    --dark-text: #f7f7f7;
-    --dark-bg: #222430;
-    --dark-theme: #bd93f9;
-
-    /* Default mode */
-    --text-color: var(--light-text);
-    --bg-color: var(--light-bg);
-    --theme-color: var(--light-theme);
   }
-
-  /* Switched mode */
   :global(.darkTheme) {
-    --text-color: var(--dark-text);
-    --bg-color: var(--dark-bg);
-    --theme-color: var(--dark-theme);
   }
   :global(.lightTheme) {
-    --text-color: var(--light-text);
-    --bg-color: var(--light-bg);
-    --theme-color: var(--light-theme);
   }
-
-  /* Styling */
-  :global(:root) {
+  :global(body) {
     background: var(--bg-color);
     color: var(--text-color);
-    font: normal 125%/1.4 Georgia, "Times New Roman", Times, serif;
+    font-family: var(--font-family);
     min-height: 100%;
     transition: color 0.2s, background-color 0.2s;
   }
-
-  // :global(body) {
-  body {
-    // color: color.adjust(var(--light-theme), $red: 15);
-    @debug color.blackness(var(--light-theme));
-    // color: color.blackness(var(--light-theme));
-    // color: var(--light-theme);
-  }
   a {
     color: var(--theme-color);
-    /* filter: brightness(var(--light-theme-lighten)) contrast(1.5) saturate(1.5); */
-    /* filter: brightness(1.75); */
   }
-  /* --light-theme: { */
-  /*   text-color: #d34a97 */
-  /*   filter: brightness(1.75) */
-  /* } */
 </style>

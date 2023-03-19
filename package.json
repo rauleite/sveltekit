@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --host",
 		"build": "vite build",
 		"cloud:create": "pnpm exec wrangler pages project create",
 		"cloud:publish": "pnpm exec wrangler publish .svelte-kit/cloudflare/_worker.js",
@@ -11,17 +11,20 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
-	"pnpm":{
+	"pnpm": {
 		"overrides": {
-   		"svelte": "npm:@typhonjs-svelte/svelte@3.55.1-cq2"
+			"svelte": "npm:@typhonjs-svelte/svelte@3.55.1-cq2"
 		}
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-cloudflare": "^2.2.0",
 		"@sveltejs/kit": "^1.5.0",
+		"postcss-load-config": "^4.0.1",
+		"postcss-preset-env": "^8.0.1",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
+		"svelte-preprocess": "^5.0.3",
 		"tslib": "^2.4.1",
 		"typescript": "^4.9.3",
 		"vite": "^4.0.0",

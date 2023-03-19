@@ -1,12 +1,38 @@
 import adapter from '@sveltejs/adapter-cloudflare';
 // import adapter from '@sveltejs/adapter-auto';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+
+// import { vitePreprocess } from '@sveltejs/kit/vite';
+
+import preprocess from 'svelte-preprocess';
+// import autoprefixer from 'autoprefixer'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
-	preprocess: vitePreprocess(),
+
+	preprocess: preprocess({
+		postcss: true
+	}),
+
+	// preprocess: vitePreprocess(),
+
+	// preprocess: vitePreprocess({
+	// 	style: {
+	// 		css: {
+	// 			postcss: true
+	// 		}
+	// 	}
+	// }),
+
+	// preprocess: vitePreprocess({
+	// 	style: {
+	// 		css: {
+	// 			// postcss: ['postcss-preset-env']
+	// 			postcss: [presetEnv(), autoprefixer()]
+	// 		}
+	// 	}
+	// }),
 
 	kit: {
 		adapter: adapter({

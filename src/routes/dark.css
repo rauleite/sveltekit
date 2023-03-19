@@ -1,0 +1,18 @@
+.darkTheme {
+    --font-family: Inter,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,system-ui,Droid Sans,Helvetica Neue,sans-serif;
+    --theme-font-family-heading: 'Quicksand', sans-serif;
+    /*#e6c833*/
+    --color-primary-h: 50;
+    --color-primary-s: 78%;
+    --color-primary-l: 55%;
+    
+    --text-color: hsl(
+      var(--color-primary-h),
+      var(--color-primary-s),
+      var(--color-primary-l)
+    );
+    --bg-color: #222430;
+    --theme-color: var(--dark-theme);
+    --text-color: #f7f7f7;
+    --dark-theme: #bd93f9;
+}

@@ -6,7 +6,7 @@ export enum Theme {
 	contrast = "contrastTheme",
 	dark = "darkTheme",
 	light = "lightTheme",
-	system = "system",
+	system = "systemTheme",
 }
 
 export enum Action {
@@ -14,12 +14,27 @@ export enum Action {
 	add = "add",
 }
 // Theming --- --- --- --- --- --- ---
+export const isDarkScheme = browser && window.matchMedia(
+	"(prefers-color-scheme: dark)"
+).matches;
+
+/**
+	* often add and remove classes
+*/
 const updateClass = (actionClass: string[][]) => {
 	actionClass.forEach(([action, className]) => {
-		document.documentElement.classList[action](className);
+		document.documentElement.classList[action as Action](className);
 	});
-};
+}
+
 export const addClass = (theme: Theme) => {
+	updateClass([
+		[Action.add, theme]
+	])
+};
+
+// set only a class on this element
+export const setClass = (theme: Theme) => {
 	if (theme === Theme.dark) {
 		updateClass([
 			[Action.remove, Theme.light],
@@ -46,7 +61,7 @@ export const getConstrastStorage = (): string => {
 	return localStorage.getItem(Theme.contrast) || Theme.system;
 };
 
-export const setContrastStorage = (theme: string): void => {
+export const addContrastStorage = (theme: string): void => {
 	if (!browser) {
 		return;
 	}
